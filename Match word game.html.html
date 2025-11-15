@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Match the word</title>
+<h1>Assalamualikm Students <br>Let us learn some new word.<br> It will help you to improve your english</h1>
+
+
+<style>
+background
+{
+color:blue;
+}
+    
+    body {
+        margin: 0;
+        font-family: Arial;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        background: linear-gradient(120deg, #0f172a, #1e3a8a, #0f172a);
+        background-size: 300% 300%;
+        animation: bgMove 12s infinite alternate;
+        color: #fff;
+    }
+
+    @keyframes bgMove {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .game-box {
+        background: rgba(30, 41, 59, 0.7);
+        padding: 30px;
+        border-radius: 20px;
+        width: 360px;
+        text-align: center;
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        backdrop-filter: blur(10px);
+    }
+
+    
+    h2 {
+        margin-bottom: 20px;
+        text-shadow: 0 0 8px #38bdf8;
+    }
+
+    
+    #target {
+        font-size: 26px;
+        margin-bottom: 10px;
+        font-weight: bold;
+        letter-spacing: 4px;
+    }
+
+
+    #tiles {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .tile {
+        position: relative;
+        background: linear-gradient(145deg, #334155, #1e293b);
+        padding: 20px 22px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 22px;
+        font-weight: bold;
+        transition: 0.25s;
+        user-select: none;
+
+        box-shadow: 4px 4px 10px #0f172a,
+                    -4px -4px 10px #475569;
+    }
+
+  
+    .tile::after {
+        content: "";
+        position: absolute;
+        top: 5px;
+        left: 6px;
+        width: 60%;
+        height: 30%;
+        border-radius: 40%;
+        background: rgba(255,255,255,0.15);
+        pointer-events: none;
+    }
+
+    .tile:hover {
+        transform: scale(1.12);
+    }
+
+    .tile.used {
+        opacity: 0.3;
+        pointer-events: none;
+        box-shadow: none;
+    }
+
+    #message {
+        margin-top: 20px;
+        font-size: 20px;
+        height: 30px;
+    }
+
+    button {
+        margin-top: 25px;
+        padding: 12px 20px;
+        font-size: 18px;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: bold;
+        background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+        box-shadow: 0 4px 15px rgba(56,189,248,0.5);
+        transition: 0.3s;
+        color: black;
+    }
+
+    button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(56,189,248,0.8);
+    }
+
+    button:active {
+        transform: scale(0.95);
+    }
+
+   
+    .shake {
+        animation: shakeAnim 0.4s;
+    }
+
+    @keyframes shakeAnim {
+        0%,100% { transform: translate(0); }
+        20% { transform: translateX(-5px); }
+        40% { transform: translateX(5px); }
+        60% { transform: translateX(-5px); }
+        80% { transform: translateX(5px); }
+    }
+</style>
+<body>
+
+
+</body>
+</head>
+<body>
+
+<!-- 🎵 Sound Effects -->
+<audio id="clickSound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
+<audio id="wrongSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+<audio id="successSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+
+<div class="game-box">
+    <h2>Match the word</h2>
+
+    <div id="target">_ _ _ _</div>
+
+    <div id="tiles"></div>
+
+    <div id="message"></div>
+
+    <button onclick="startGame()">New Word</button>
+</div>
+
+<script>
+    const words = ["apple", "banana", "mango", "orange", "house", "water", "school", "chair","freah","problem","Relationship"];
+    let targetWord = "";
+    let builtWord = "";
+
+    const clickSound = document.getElementById("clickSound");
+    const wrongSound = document.getElementById("wrongSound");
+    const successSound = document.getElementById("successSound");
+
+ 
+    function shuffle(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+   
+    function startGame() {
+        builtWord = "";
+        document.getElementById("message").textContent = "";
+
+        targetWord = words[Math.floor(Math.random() * words.length)];
+        document.getElementById("target").textContent = "_ ".repeat(targetWord.length);
+
+        let letters = targetWord.split("");
+        shuffle(letters);
+
+        let tilesDiv = document.getElementById("tiles");
+        tilesDiv.innerHTML = "";
+
+        letters.forEach(letter => {
+            let tile = document.createElement("div");
+            tile.classList.add("tile");
+            tile.textContent = letter.toUpperCase();
+            tile.dataset.letter = letter;
+
+            tile.addEventListener("click", () => selectLetter(tile));
+            tilesDiv.appendChild(tile);
+        });
+    }
+
+   
+    function selectLetter(tile) {
+        clickSound.play();
+
+        let letter = tile.dataset.letter;
+        builtWord += letter;
+        tile.classList.add("used");
+
+        updateTargetDisplay();
+
+        if (builtWord === targetWord) {
+            document.getElementById("message").textContent = "🎉 Vary Good";
+            successSound.play();
+        } 
+        else if (!targetWord.startsWith(builtWord)) {
+            document.getElementById("message").textContent = "❌ Wrong!";
+            wrongSound.play();
+            shake();
+        }
+    }
+
+
+    function shake() {
+        let box = document.getElementById("target");
+        box.classList.add("shake");
+        setTimeout(() => box.classList.remove("shake"), 500);
+    }
+
+ 
+    function updateTargetDisplay() {
+        let display = builtWord.split("").join(" ").toUpperCase();
+        let remaining = targetWord.length - builtWord.length;
+        display += " _".repeat(remaining);
+        document.getElementById("target").textContent = display;
+    }
+
+    startGame();
+</script>
+
+</body>
+</html>
